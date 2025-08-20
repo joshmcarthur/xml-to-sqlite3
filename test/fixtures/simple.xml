@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root id="root_element">
+  <child id="child_1" type="simple" count="5">
+    <text>Hello World</text>
+  </child>
+  <child id="child_2" type="complex" count="10" active="true">
+    <text>Another element</text>
+    <nested id="nested_1" depth="2">
+      <content>Nested content</content>
+    </nested>
+  </child>
+</root>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library id="main_library">
+  <metadata id="lib_metadata">
+    <name>Central Library</name>
+    <location id="location_1">Downtown</location>
+    <established>2020-01-15</established>
+  </metadata>
+
+  <categories id="categories">
+    <category id="cat_fiction" name="Fiction" description="Fictional literature">
+      <subcategory id="cat_scifi" name="Science Fiction" parent="cat_fiction"/>
+      <subcategory id="cat_mystery" name="Mystery" parent="cat_fiction"/>
+    </category>
+    <category id="cat_nonfiction" name="Non-Fiction" description="Non-fictional works">
+      <subcategory id="cat_history" name="History" parent="cat_nonfiction"/>
+      <subcategory id="cat_science" name="Science" parent="cat_nonfiction"/>
+    </category>
+  </categories>
+
+  <books id="books">
+    <book id="book_1" isbn="978-0-123456-47-2" category="cat_fiction" published="2021-03-15">
+      <title>The Quantum Garden</title>
+      <author id="author_1" name="Alice Johnson" email="alice@example.com">
+        <bio>Alice Johnson is a renowned science fiction author.</bio>
+        <awards>
+          <award id="award_1" year="2022" name="Hugo Award"/>
+        </awards>
+      </author>
+      <description>A thrilling journey through quantum mechanics and parallel universes.</description>
+      <pages>342</pages>
+      <price currency="USD">24.99</price>
+      <tags>
+        <tag id="tag_scifi">science-fiction</tag>
+        <tag id="tag_quantum">quantum-physics</tag>
+        <tag id="tag_adventure">adventure</tag>
+      </tags>
+    </book>
+
+    <book id="book_2" isbn="978-0-987654-32-1" category="cat_mystery" published="2020-11-08">
+      <title>The Silent Echo</title>
+      <author id="author_2" name="Bob Smith" email="bob@example.com">
+        <bio>Bob Smith specializes in mystery and detective fiction.</bio>
+        <awards>
+          <award id="award_2" year="2021" name="Edgar Award"/>
+        </awards>
+      </author>
+      <description>A detective novel set in 1940s Los Angeles.</description>
+      <pages>298</pages>
+      <price currency="USD">19.99</price>
+      <tags>
+        <tag id="tag_mystery">mystery</tag>
+        <tag id="tag_detective">detective</tag>
+        <tag id="tag_historical">historical</tag>
+      </tags>
+    </book>
+
+    <book id="book_3" isbn="978-0-555555-55-5" category="cat_history" published="2019-06-22">
+      <title>Ancient Civilizations</title>
+      <author id="author_3" name="Carol Davis" email="carol@example.com">
+        <bio>Carol Davis is a historian specializing in ancient civilizations.</bio>
+        <awards>
+          <award id="award_3" year="2020" name="Historical Society Award"/>
+        </awards>
+      </author>
+      <description>Comprehensive study of ancient Egyptian, Greek, and Roman civilizations.</description>
+      <pages>456</pages>
+      <price currency="USD">34.99</price>
+      <tags>
+        <tag id="tag_history">history</tag>
+        <tag id="tag_ancient">ancient</tag>
+        <tag id="tag_educational">educational</tag>
+      </tags>
+    </book>
+  </books>
+
+  <reviews id="reviews">
+    <review id="review_1" book_id="book_1" rating="5" date="2021-04-10">
+      <reviewer id="reviewer_1" name="David Wilson"/>
+      <comment>Absolutely brilliant! The quantum mechanics concepts are explained beautifully.</comment>
+    </review>
+    <review id="review_2" book_id="book_1" rating="4" date="2021-04-15">
+      <reviewer id="reviewer_2" name="Eva Brown"/>
+      <comment>Great story, though some parts were a bit confusing.</comment>
+    </review>
+    <review id="review_3" book_id="book_2" rating="5" date="2020-12-01">
+      <reviewer id="reviewer_3" name="Frank Miller"/>
+      <comment>Classic noir detective story with a modern twist.</comment>
+    </review>
+  </reviews>
+</library>
