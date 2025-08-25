@@ -120,6 +120,8 @@ class XMLToSQLite
 
   def relationship_adapters
     [
+      StructuralRelationshipAdapter.new,
+      AttributeReferenceAdapter.new
     ]
   end
 
