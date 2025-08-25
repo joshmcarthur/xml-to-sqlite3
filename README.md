@@ -34,6 +34,7 @@ A Ruby tool for converting XML documents into a SQLite database that preserves d
 ### Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/joshmcarthur/xml-to-sqlite3.git
    cd xml-to-sqlite3
@@ -84,14 +85,18 @@ converter.run!
 The tool creates a comprehensive database schema that preserves XML structure:
 
 ### Documents Table
+
 Stores metadata about processed XML files:
+
 - `id`: Document identifier (derived from filename)
 - `filename`: Full path to the XML file
 - `file_size`: Size of the file in bytes
 - `parsed_at`: Timestamp when the file was processed
 
 ### Nodes Table
+
 Represents XML elements with their hierarchical relationships:
+
 - `id`: Node identifier (from XML `id` attribute)
 - `node_type`: XML element name
 - `document_id`: Reference to the source document
@@ -102,14 +107,16 @@ Represents XML elements with their hierarchical relationships:
 - `created_at`: Timestamp when the node was created
 
 ### Node Properties Table
+
 Stores XML attributes as key-value pairs:
+
 - `node_id`: Reference to the node
 - `property_name`: Attribute name
 - `property_value`: Attribute value
 - `data_type`: Inferred data type (string, integer, float, boolean, datetime)
 
 ### Cross References Table
-*Planned feature* - Will store relationships between nodes:
+
 - `source_node_id`: Source node reference
 - `target_node_id`: Target node reference
 - `reference_type`: Type of relationship
@@ -120,11 +127,13 @@ Stores XML attributes as key-value pairs:
 ## Example Queries
 
 ### Find all nodes of a specific type
+
 ```sql
 SELECT * FROM nodes WHERE node_type = 'book';
 ```
 
 ### Get hierarchical structure
+
 ```sql
 WITH RECURSIVE node_tree AS (
   SELECT id, node_type, parent_id, content, 0 as level
@@ -138,6 +147,7 @@ SELECT * FROM node_tree ORDER BY level, id;
 ```
 
 ### Search for nodes with specific attributes
+
 ```sql
 SELECT n.*, np.property_value
 FROM nodes n
@@ -146,6 +156,7 @@ WHERE np.property_name = 'category' AND np.property_value = 'fiction';
 ```
 
 ### Content search (using LIKE)
+
 ```sql
 SELECT * FROM nodes WHERE content LIKE '%search term%';
 ```
@@ -164,10 +175,19 @@ SELECT * FROM nodes WHERE content LIKE '%search term%';
 ```
 xml-to-sqlite3/
 ├── main.rb                 # Main application entry point
-├── schema_manager.rb       # Database schema management
+|   ├── lib/
+│   │   ├── schema/
+│   │   └── relationships/
+│   │       ├── adapter.rb     # Base adapter class
+│   │       ├── manager.rb     # Relationship manager
+│   │       └── detector.rb    # Relationship detector
+│   │       └── adapters/      # Adapter implementations
 ├── db/
 │   └── migrate/           # Database migrations
 │       └── 001_create_base_schema.rb
+│       └── 002_enhance_relationships.rb
+│       └── 00x_migration_name.rb
+|
 └── README.md
 ```
 
@@ -175,7 +195,6 @@ xml-to-sqlite3/
 
 1. **Database Schema Changes**: Create new migration files in `db/migrate/`
 2. **Core Logic**: Extend the `XMLToSQLite` class in `main.rb`
-3. **Schema Management**: Update `SchemaManager` to include new migrations
 
 ### Testing
 
@@ -190,18 +209,6 @@ The project includes a comprehensive test suite using Minitest that covers:
 ```bash
 # Run all tests
 rake test
-
-# Run specific test categories
-rake test_basic      # Basic functionality tests
-rake test_sql        # SQL operation tests
-rake test_edge_cases # Edge case tests
-
-# Run tests with coverage (requires simplecov gem)
-rake test_with_coverage
-
-# Run tests directly with Ruby
-ruby test/run_tests.rb
-ruby test/run_tests.rb test_basic_functionality.rb
 ```
 
 #### Test Structure
@@ -212,7 +219,6 @@ test/
 ├── test_basic_functionality.rb # Core functionality tests
 ├── test_sql_operations.rb      # SQL query tests
 ├── test_edge_cases.rb          # Edge case and error handling tests
-├── run_tests.rb               # Test runner script
 └── fixtures/                  # XML test fixtures
     ├── sample_library.xml     # Complex library catalog example
     └── simple.xml             # Simple XML for basic tests
@@ -230,18 +236,20 @@ The tests use temporary databases and files to ensure isolation and cleanup.
 
 ## License
 
-*License information to be added*
+See LICENSE.md for license information.
 
 ## Roadmap
 
 ### Short Term
-- [ ] Implement relationship derivation between nodes
-- [ ] Add attribute-based cross-referencing
+
+- [x] Implement relationship derivation between nodes
+- [x] Add attribute-based cross-referencing
 
 ### Medium Term
+
 - [ ] Package as RubyGem
 - [ ] Add configuration file support
-- [ ] Add support for custom relationship types
+- [x] Add support for custom relationship types
 - [ ] Create auto-generated views for node types
 - [ ] Automatically create FTS indexes for full-text search
 - [ ] Add support for vectorisation of node content
