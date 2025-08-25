@@ -18,7 +18,6 @@ require 'pathname'
 $LOAD_PATH.unshift(File.expand_path('..', __dir__))
 
 require_relative '../main'
-require_relative '../schema_manager'
 
 class Minitest::Test
   def setup

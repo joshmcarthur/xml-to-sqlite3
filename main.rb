@@ -10,8 +10,10 @@ gemfile do
   gem 'nokogiri'
   gem 'sqlite3'
 end
-
-require_relative 'schema_manager'
+require_relative 'lib/schema/manager'
+Dir.glob(File.join(__dir__, 'db', 'migrate', '*.rb')).each do |file|
+  require file
+end
 
 ##
 # Processes a directory of XML files and converts them to a SQLite database representing
