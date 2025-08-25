@@ -18,7 +18,6 @@ require 'pathname'
 $LOAD_PATH.unshift(File.expand_path('..', __dir__))
 
 require_relative '../main'
-require_relative '../schema_manager'
 
 class Minitest::Test
   def setup
@@ -60,4 +59,6 @@ class Minitest::Test
     columns = result.map { |row| row[1] }
     assert_includes columns, column_name, "Column '#{column_name}' should exist in table '#{table_name}'"
   end
+
+  attr_reader :test_db_path
 end

@@ -10,8 +10,11 @@ gemfile do
   gem 'nokogiri'
   gem 'sqlite3'
 end
-
-require_relative 'schema_manager'
+require_relative 'lib/schema/manager'
+require_relative 'lib/relationships'
+Dir.glob(File.join(__dir__, 'db', 'migrate', '*.rb')).each do |file|
+  require file
+end
 
 ##
 # Processes a directory of XML files and converts them to a SQLite database representing
@@ -26,12 +29,15 @@ require_relative 'schema_manager'
 #   -o, --output FILE: Output SQLite database file
 #   -v, --verbose: Verbose output
 class XMLToSQLite
+  attr_reader :relationship_detector
+
   def initialize(options = {})
     @input_dir = options[:input_dir] || 'xml_files'
     @output_db = options[:output_db] || 'db/output.sqlite3'
     @batch_size = options[:batch_size] || 1000
     @verbose = options[:verbose] || false
     @force = options[:force] || false
+    @detect_relationships = options[:detect_relationships] != false # Default to true
   end
 
   def run!
@@ -59,6 +65,7 @@ class XMLToSQLite
     end
 
     # Final steps
+    detect_relationships if @detect_relationships
     create_views
 
     @db.commit
@@ -78,6 +85,28 @@ class XMLToSQLite
 
     SchemaManager.new(@output_db).migrate!
     @db.transaction # Start transaction for bulk inserts
+
+    # Initialize relationship detector if enabled
+    return unless @detect_relationships
+
+    @relationship_detector = RelationshipDetector.new(@db)
+    register_relationship_adapters
+  end
+
+  def detect_relationships
+    puts 'Detecting relationships between nodes...'
+
+    # Get all documents
+    documents = @db.execute('SELECT id FROM documents')
+
+    total_relationships = 0
+    documents.each do |doc|
+      document_id = doc[0]
+      relationships_count = @relationship_detector.detect_all_relationships(document_id)
+      total_relationships += relationships_count
+    end
+
+    puts "Total relationships detected: #{total_relationships}"
   end
 
   def create_views
@@ -86,6 +115,19 @@ class XMLToSQLite
 
     node_types.each do |node_type|
       # create_node_type_view(node_type)
+    end
+  end
+
+  def relationship_adapters
+    [
+      StructuralRelationshipAdapter.new,
+      AttributeReferenceAdapter.new
+    ]
+  end
+
+  def register_relationship_adapters
+    relationship_adapters.each do |adapter|
+      @relationship_detector.add_adapter(adapter)
     end
   end
 
@@ -202,6 +244,10 @@ OptionParser.new do |opts|
 
   opts.on('-v', '--verbose', 'Verbose output') do |v|
     options[:verbose] = v
+  end
+
+  opts.on('--no-relationships', 'Disable relationship detection') do
+    options[:detect_relationships] = false
   end
 end.parse!
 

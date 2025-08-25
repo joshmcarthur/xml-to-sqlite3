@@ -14,7 +14,8 @@ class SchemaManager
     end
 
     migrations = [
-      CreateBaseSchema
+      ::CreateBaseSchema,
+      ::EnhanceRelationships
     ]
 
     migrations.each_with_index do |migration, index|
