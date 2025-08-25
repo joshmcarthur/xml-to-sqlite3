@@ -20,6 +20,10 @@ class RelationshipDetector
     @manager.add_adapter(adapter)
   end
 
+  def adapters
+    @manager.adapters
+  end
+
   # Alias for backwards compatibility with examples
   alias add_custom_adapter add_adapter
 end
