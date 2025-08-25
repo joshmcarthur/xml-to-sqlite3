@@ -229,6 +229,6 @@ class TestSQLOperations < Minitest::Test
     assert_operator stats[0], :>, 0 # total_nodes
     assert_operator stats[1], :>, 0 # node_types
     assert_equal 1, stats[2] # documents (we only processed one file)
-    assert_equal 0, stats[3] # cross_refs (not implemented yet)
+    assert_operator stats[3], :>, stats[0] # cross_refs (should be at least as many as nodes)
   end
 end
