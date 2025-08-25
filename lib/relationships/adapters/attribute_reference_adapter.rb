@@ -26,7 +26,8 @@ class AttributeReferenceAdapter < RelationshipAdapter
 
     # Check each property value for direct ID references
     properties.each do |property|
-      check_property(property, node_ids)
+      relationship = check_property(property, node_ids)
+      relationships << relationship if relationship
     end
 
     relationships
@@ -34,7 +35,7 @@ class AttributeReferenceAdapter < RelationshipAdapter
 
   private
 
-  def check_property(property)
+  def check_property(property, node_ids = [])
     node_id, property_name, property_value = property
 
     # Skip if not a valid single reference
@@ -42,16 +43,14 @@ class AttributeReferenceAdapter < RelationshipAdapter
     return unless node_ids.include?(property_value)
 
     confidence = calculate_reference_confidence(property_name, property_value)
-    relationships << create_relationship(
+
+    create_relationship(
       node_id, property_value, 'attribute_reference', confidence, property_name
     )
   end
 
   def single_id_reference?(value)
     return false if value.nil? || value.empty?
-
-    # Skip values that contain separators (handled by multi-reference adapters)
-    return false if value.include?(' ') || value.include?(',')
 
     # Common patterns for single ID references
     patterns = [
