@@ -313,22 +313,11 @@ class TestRelationshipDetection < Minitest::Test
     xml_file = create_xml_fixture(xml_content)
     input_dir = File.dirname(xml_file)
 
-    # Create converter but don't run it yet
-    converter = XMLToSQLite.new(input_dir: input_dir, output_db: test_db_path)
-    converter.send(:setup_database)
-
     # Load the MultiReferenceAdapter example
     require_relative '../examples/relationship_adapters/multi_reference_adapter'
 
-    # Process the document first
-    converter.send(:process_xml_file, xml_file)
-
-    # Add multi-reference adapter and detect relationships
-    detector = converter.instance_variable_get(:@relationship_detector)
-    detector.add_custom_adapter(MultiReferenceAdapter.new)
-    converter.send(:detect_relationships)
-
-    db = converter.instance_variable_get(:@db)
+    # Run converter with custom adapter
+    db = run_converter(input_dir, custom_adapters: [MultiReferenceAdapter.new])
 
     # Should find both core single references and multi-references
     single_refs = db.execute(
@@ -363,10 +352,6 @@ class TestRelationshipDetection < Minitest::Test
     xml_file = create_xml_fixture(xml_content)
     input_dir = File.dirname(xml_file)
 
-    # Create converter but don't run it yet
-    converter = XMLToSQLite.new(input_dir: input_dir, output_db: test_db_path)
-    converter.send(:setup_database)
-
     # Create a simple custom adapter
     custom_adapter = Class.new(RelationshipAdapter) do
       def detect_relationships(document_id, db)
@@ -390,15 +375,8 @@ class TestRelationshipDetection < Minitest::Test
       end
     end
 
-    # Process the document first
-    converter.send(:process_xml_file, xml_file)
-
-    # Add custom adapter and detect relationships
-    detector = converter.instance_variable_get(:@relationship_detector)
-    detector.add_custom_adapter(custom_adapter.new)
-    converter.send(:detect_relationships)
-
-    db = converter.instance_variable_get(:@db)
+    # Run converter with custom adapter
+    db = run_converter(input_dir, custom_adapters: [custom_adapter.new])
 
     # Should find the custom relationship
     custom_rels = db.execute(

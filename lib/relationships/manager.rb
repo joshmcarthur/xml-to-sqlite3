@@ -6,6 +6,8 @@ require 'sqlite3'
 # Manages the detection and storage of relationships between XML nodes
 # using an adapter pattern to support different types of relationship detection
 class RelationshipManager
+  attr_reader :adapters
+
   def initialize(db)
     @db = db
     @adapters = []
