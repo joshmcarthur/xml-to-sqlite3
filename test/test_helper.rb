@@ -36,17 +36,22 @@ class Minitest::Test
   end
 
   def run_converter(input_dir, options = {})
+    custom_adapters = options.delete(:custom_adapters) || []
     default_options = {
       input_dir: input_dir,
       output_db: @test_db_path,
       verbose: false,
-      force: true
+      force: true,
+      concurrency: 1  # Use concurrency = 1 for tests
     }
 
     converter = XMLToSQLite.new(default_options.merge(options))
-    converter.run!
-
-    SQLite3::Database.new(@test_db_path)
+    converter.send(:setup_database)
+    custom_adapters.each { |adapter| converter.relationship_detector.add_adapter(adapter) }
+    converter.send(:_run)
+    db = SQLite3::Database.new(@test_db_path)
+    db.execute('PRAGMA foreign_keys = ON')
+    db
   end
 
   def assert_table_exists(db, table_name)
