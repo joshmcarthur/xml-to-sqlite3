@@ -7,7 +7,7 @@ require 'sqlite3'
 # using an adapter pattern to support different types of relationship detection
 class RelationshipManager
   attr_reader :adapters
-  
+
   def initialize(db)
     @db = db
     @adapters = []
